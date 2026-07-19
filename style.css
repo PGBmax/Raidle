@@ -1,0 +1,588 @@
+/* =========================================================================
+   RAIDLE — design tokens
+   Palette   : deep arcane violet ground, ember-gold accent, affinity hues
+   Type      : Cinzel (display, runic/carved) + Manrope (body/UI)
+   Signature : the "summon portal" — a rotating rune ring around the
+               silhouette guess, echoing Raid's summon-circle iconography
+   ========================================================================= */
+
+:root {
+  --bg: #0f0a1c;
+  --bg-alt: #150e28;
+  --surface: #1c1436;
+  --surface-2: #251c44;
+  --border: #362a5c;
+  --border-soft: #2a2148;
+
+  --text: #ede6f7;
+  --text-muted: #a496c7;
+  --text-faint: #6f6394;
+
+  --gold: #e3b341;
+  --gold-bright: #f6d370;
+  --gold-dim: #8a6a2a;
+
+  --magic: #5b9df0;
+  --spirit: #57c278;
+  --force: #e15b4f;
+  --void: #a97bf0;
+
+  --correct: #3fa872;
+  --correct-bg: #1c3a2c;
+  --wrong-bg: #241b3f;
+  --close: #e3b341;
+
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  --shadow-deep: 0 20px 60px rgba(0,0,0,0.55);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- ambient background ---------- */
+
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(680px 420px at 50% -10%, rgba(227,179,65,0.14), transparent 60%),
+    radial-gradient(900px 600px at 85% 10%, rgba(90,60,160,0.22), transparent 55%),
+    radial-gradient(700px 500px at 5% 30%, rgba(87,194,120,0.08), transparent 55%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+}
+
+/* ---------- header ---------- */
+
+.site-header {
+  position: relative;
+  z-index: 1;
+  padding: 48px 20px 12px;
+  text-align: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  color: var(--gold);
+  font-size: 22px;
+  transform: translateY(-2px);
+}
+
+.site-header h1 {
+  font-family: 'Cinzel', serif;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
+  letter-spacing: 0.14em;
+  margin: 0;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 55%, var(--gold-dim) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 24px rgba(227,179,65,0.25);
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+
+.subtitle strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* ---------- layout ---------- */
+
+.game {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- mode switch ---------- */
+
+.mode-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  margin-bottom: 28px;
+}
+
+.mode-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  padding: 9px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.mode-btn:hover { color: var(--text); }
+
+.mode-btn.is-active {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: #241505;
+}
+
+/* ---------- portal (signature element) ---------- */
+
+.portal-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.portal {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.portal-glow {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(227,179,65,0.22) 0%, rgba(227,179,65,0) 68%);
+  filter: blur(2px);
+}
+
+.portal-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--gold-dim);
+  background:
+    repeating-conic-gradient(from 0deg, rgba(227,179,65,0.55) 0deg 2deg, transparent 2deg 18deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 10px), #000 calc(100% - 9px));
+  animation: spin 34s linear infinite;
+}
+
+.portal-ring--outer {
+  inset: -16px;
+  border-color: var(--border);
+  opacity: 0.7;
+  animation-duration: 50s;
+  animation-direction: reverse;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.portal-figure {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #241a42, #150e28 75%);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+}
+
+.portal-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0) saturate(100%);
+  transition: filter 0.5s ease;
+}
+
+.portal-figure.is-revealed img {
+  filter: none;
+}
+
+.placeholder-glyph {
+  font-family: 'Cinzel', serif;
+  font-size: 3.4rem;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+
+.portal-caption {
+  margin: 16px 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ---------- guess input ---------- */
+
+.guess-box {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.autocomplete {
+  position: relative;
+  flex: 1;
+}
+
+.guess-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.guess-input::placeholder { color: var(--text-faint); }
+
+.guess-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(227,179,65,0.15);
+}
+
+.suggestions {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-deep);
+}
+
+.suggestions li {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.94rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.suggestions li:hover,
+.suggestions li.is-active {
+  background: var(--surface);
+  color: var(--gold-bright);
+}
+
+.suggestions .no-match {
+  color: var(--text-faint);
+  cursor: default;
+  font-weight: 500;
+}
+
+.suggestions .no-match:hover {
+  background: transparent;
+  color: var(--text-faint);
+}
+
+.give-up-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.give-up-btn:hover {
+  border-color: var(--force);
+  color: var(--force);
+}
+
+/* ---------- result banner ---------- */
+
+.result-banner {
+  width: 100%;
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  text-align: center;
+  font-weight: 700;
+  animation: rise 0.35s ease both;
+}
+
+.result-banner.win {
+  background: linear-gradient(180deg, rgba(63,168,114,0.18), rgba(63,168,114,0.06));
+  border: 1px solid rgba(63,168,114,0.5);
+  color: #a7e8c4;
+}
+
+.result-banner.lose {
+  background: linear-gradient(180deg, rgba(225,91,79,0.18), rgba(225,91,79,0.06));
+  border: 1px solid rgba(225,91,79,0.5);
+  color: #f3b7b0;
+}
+
+.result-banner .answer-name {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-bright);
+}
+
+.result-banner .banner-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.banner-actions button {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.banner-actions button:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- board ---------- */
+
+.board-wrap {
+  width: 100%;
+}
+
+.board-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+}
+
+.board {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+  background: var(--surface);
+}
+
+.board thead th {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 700;
+  padding: 12px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.board thead th.col-portrait { text-align: left; padding-left: 16px; }
+
+.board tbody td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.board tbody tr:last-child td { border-bottom: none; }
+
+.cell-portrait {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 16px !important;
+  text-align: left !important;
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.cell-portrait img,
+.cell-portrait .thumb-fallback {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cell-portrait .thumb-fallback {
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.cell.is-correct {
+  background: var(--correct-bg);
+  color: #a7e8c4;
+}
+
+.cell.is-wrong {
+  background: var(--wrong-bg);
+  color: var(--text-muted);
+}
+
+.cell .arrow {
+  margin-left: 4px;
+  color: var(--close);
+  font-weight: 900;
+}
+
+.affinity-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.affinity-dot.Magic { background: var(--magic); }
+.affinity-dot.Spirit { background: var(--spirit); }
+.affinity-dot.Force { background: var(--force); }
+.affinity-dot.Void { background: var(--void); }
+
+.row-enter {
+  animation: rowIn 0.4s ease both;
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- legend ---------- */
+
+.legend {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legend-swatch--correct { background: var(--correct-bg); border: 1px solid rgba(63,168,114,0.6); }
+.legend-swatch--wrong { background: var(--wrong-bg); border: 1px solid var(--border); }
+
+.legend-arrow { color: var(--close); font-weight: 800; }
+
+/* ---------- footer ---------- */
+
+.site-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 20px;
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 480px) {
+  .portal { width: 150px; height: 150px; }
+  .portal-figure { width: 116px; height: 116px; }
+  .site-header h1 { letter-spacing: 0.08em; }
+}
