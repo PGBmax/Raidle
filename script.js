@@ -37,6 +37,30 @@
       .trim();
   }
 
+  /* ---------------- alliance mapping ---------------- */
+  const FACTION_ALLIANCE = {
+    "Sacred Order":   "Telerian League",
+    "Barbarians":     "Telerian League",
+    "High Elves":     "Telerian League",
+    "Banner Lords":   "Telerian League",
+    "Ogryn Tribes":   "Gaellen Pact",
+    "Lizardmen":      "Gaellen Pact",
+    "Orcs":           "Gaellen Pact",
+    "Skinwalkers":    "Gaellen Pact",
+    "Undead Hordes":  "The Corrupted",
+    "Dark Elves":     "The Corrupted",
+    "Demonspawn":     "The Corrupted",
+    "Knights Revenant": "The Corrupted",
+    "Argonites":      "Nyresian Union",
+    "Dwarves":        "Nyresian Union",
+    "Shadowkin":      "Nyresian Union",
+    "Sylvan Watchers": "Nyresian Union",
+  };
+
+  function getAlliance(champ) {
+    return FACTION_ALLIANCE[champ.faction] || "Unknown";
+  }
+
   // Build AVAILABLE_CHAMPIONS: Legendary/Mythical only, deduplicated by normalized name
   const AVAILABLE_CHAMPIONS = (Array.isArray(CHAMPIONS)
     ? (function () {
@@ -312,7 +336,6 @@
     guesses.push(champ);
 
     const row = document.createElement("tr");
-    if (!opts.silent) row.classList.add("row-enter");
 
     // Portrait + name
     const tdPortrait = document.createElement("td");
@@ -323,8 +346,9 @@
     tdPortrait.appendChild(nameSpan);
     row.appendChild(tdPortrait);
 
-    // Faction
-    row.appendChild(makeCell(champ.faction, champ.faction === answer.faction));
+    // Rarity
+    const rarityCorrect = champ.rarity === answer.rarity;
+    row.appendChild(makeCell(champ.rarity, rarityCorrect, rarityArrow(champ.rarity, answer.rarity)));
 
     // Affinity (with colored dot)
     const affinityCorrect = champ.affinity === answer.affinity;
@@ -339,9 +363,25 @@
     // Role
     row.appendChild(makeCell(champ.role, champ.role === answer.role));
 
-    // Rarity
-    const rarityCorrect = champ.rarity === answer.rarity;
-    row.appendChild(makeCell(champ.rarity, rarityCorrect, rarityArrow(champ.rarity, answer.rarity)));
+    // Alliance
+    const champAlliance = getAlliance(champ);
+    const answerAlliance = getAlliance(answer);
+    row.appendChild(makeCell(champAlliance, champAlliance === answerAlliance));
+
+    // Faction
+    row.appendChild(makeCell(champ.faction, champ.faction === answer.faction));
+
+    // Aura
+    const champAura = champ.aura || "None";
+    const answerAura = answer.aura || "None";
+    row.appendChild(makeCell(champAura, champAura === answerAura));
+
+    if (!opts.silent) {
+      Array.from(row.cells).forEach(function (td, i) {
+        td.classList.add("cell-reveal");
+        td.style.animationDelay = (i * 210) + "ms";
+      });
+    }
 
     el.boardBody.insertBefore(row, el.boardBody.firstChild);
   }
@@ -381,7 +421,6 @@
       <div>${title}</div>
       <div class="banner-actions">
         ${mode === "infinite" ? '<button id="playAgainBtn" type="button">New Champion</button>' : ""}
-        <button id="shareBtn" type="button">Copy result</button>
       </div>
     `;
 
@@ -444,10 +483,12 @@
       .reverse()
         .map((g) => {
           const squares = [
-            g.faction === answer.faction,
+            g.rarity === answer.rarity,
             g.affinity === answer.affinity,
             g.role === answer.role,
-            g.rarity === answer.rarity,
+            getAlliance(g) === getAlliance(answer),
+            g.faction === answer.faction,
+            (g.aura || "None") === (answer.aura || "None"),
           ]
             .map((ok) => (ok ? "🟩" : "🟥"))
             .join("");

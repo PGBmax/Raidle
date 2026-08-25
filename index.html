@@ -6,93 +6,94 @@
 <title>Raidle — Guess the Raid: Shadow Legends champion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="bg-glow" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
 
 <header class="site-header">
   <div class="header-inner">
     <div class="brand">
-      <span class="brand-mark" aria-hidden="true">✦</span>
+      <div class="brand-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polygon points="11,2 20,7 20,15 11,20 2,15 2,7" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="11" cy="11" r="3" fill="currentColor"/></svg>
+      </div>
       <h1>RAIDLE</h1>
     </div>
-    <p class="subtitle">Guess the mystery champion from <strong>Raid: Shadow Legends</strong></p>
+    <p class="subtitle">Guess the mystery <strong>Legendary</strong> or <strong>Mythical</strong> champion</p>
   </div>
 </header>
 
 <main class="game">
 
-  <!-- Mode switch -->
   <div class="mode-switch" role="tablist" aria-label="Game mode">
-    <button class="mode-btn is-active" data-mode="daily" role="tab" aria-selected="true">Daily Challenge</button>
+    <button class="mode-btn is-active" data-mode="daily" role="tab" aria-selected="true">Daily</button>
     <button class="mode-btn" data-mode="infinite" role="tab" aria-selected="false">Infinite</button>
   </div>
 
-  <!-- Portal / silhouette hero -->
-  <section class="portal-wrap">
-    <div class="portal" id="portal">
-      <div class="portal-ring" aria-hidden="true"></div>
-      <div class="portal-ring portal-ring--outer" aria-hidden="true"></div>
-      <div class="portal-glow" aria-hidden="true"></div>
-      <div class="portal-figure" id="portalFigure">
+  <section class="hero">
+    <div class="hero-card" id="portal">
+      <div class="hero-inner" id="portalFigure">
         <span class="placeholder-glyph">?</span>
       </div>
+      <div class="hero-corner hero-corner--tl" aria-hidden="true"></div>
+      <div class="hero-corner hero-corner--tr" aria-hidden="true"></div>
+      <div class="hero-corner hero-corner--bl" aria-hidden="true"></div>
+      <div class="hero-corner hero-corner--br" aria-hidden="true"></div>
     </div>
-    <p class="portal-caption" id="attemptsCaption">Who is this champion? Try your luck below.</p>
+    <p class="hero-caption" id="attemptsCaption">Who is this champion? Try your luck below.</p>
   </section>
 
-  <!-- Guess input -->
-  <section class="guess-box">
+  <section class="input-row">
     <div class="autocomplete" id="autocomplete">
       <input
         type="text"
         id="guessInput"
         class="guess-input"
-        placeholder="Type a champion name…"
+        placeholder="Search a champion…"
         autocomplete="off"
         spellcheck="false"
         aria-label="Champion name"
+        aria-autocomplete="list"
+        aria-controls="suggestions"
       />
-      <ul class="suggestions" id="suggestions" hidden></ul>
+      <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
     </div>
     <button class="give-up-btn" id="giveUpBtn" type="button">Give up</button>
   </section>
 
-  <!-- Win / lose banner -->
   <section class="result-banner" id="resultBanner" hidden></section>
 
-  <!-- Guesses table -->
   <section class="board-wrap">
     <div class="board-scroll">
       <table class="board" id="board">
         <thead>
           <tr>
             <th class="col-portrait">Champion</th>
+            <th>Rarity</th>
+            <th>Affinity</th>
+            <th>Role</th>
+            <th>Alliance</th>
             <th>Faction</th>
-            <th>Affinité</th>
-            <th>Rôle</th>
-            <th>Rareté</th>
+            <th>Aura</th>
           </tr>
         </thead>
-        <tbody id="boardBody">
-        </tbody>
+        <tbody id="boardBody"></tbody>
       </table>
     </div>
   </section>
 
-  <p class="legend">
-    <span class="legend-item"><span class="legend-swatch legend-swatch--correct"></span> Correct</span>
-    <span class="legend-item"><span class="legend-swatch legend-swatch--wrong"></span> Incorrect</span>
-    <span class="legend-item"><span class="legend-arrow">↑ / ↓</span> Higher / Lower than the mystery champion</span>
-  </p>
+  <div class="legend">
+    <span class="legend-item"><span class="chip chip--correct"></span>Correct</span>
+    <span class="legend-item"><span class="chip chip--wrong"></span>Wrong</span>
+    <span class="legend-item"><span class="legend-arrow">↑↓</span>Higher / Lower</span>
+  </div>
 
 </main>
 
 <footer class="site-footer">
-  <p>Made for summoners. Champion data are customized by the site owner.</p>
+  <p>Made for summoners &mdash; Legendary &amp; Mythical only</p>
 </footer>
 
 <script src="data.js"></script>
