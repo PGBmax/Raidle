@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raidle — Devine le champion Raid Shadow Legends</title>
+<title>Raidle — Guess the Raid: Shadow Legends champion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,16 +19,16 @@
       <span class="brand-mark" aria-hidden="true">✦</span>
       <h1>RAIDLE</h1>
     </div>
-    <p class="subtitle">Devine le champion mystère de <strong>Raid: Shadow Legends</strong></p>
+    <p class="subtitle">Guess the mystery champion from <strong>Raid: Shadow Legends</strong></p>
   </div>
 </header>
 
 <main class="game">
 
   <!-- Mode switch -->
-  <div class="mode-switch" role="tablist" aria-label="Mode de jeu">
-    <button class="mode-btn is-active" data-mode="daily" role="tab" aria-selected="true">Défi du jour</button>
-    <button class="mode-btn" data-mode="infinite" role="tab" aria-selected="false">Partie infinie</button>
+  <div class="mode-switch" role="tablist" aria-label="Game mode">
+    <button class="mode-btn is-active" data-mode="daily" role="tab" aria-selected="true">Daily Challenge</button>
+    <button class="mode-btn" data-mode="infinite" role="tab" aria-selected="false">Infinite</button>
   </div>
 
   <!-- Portal / silhouette hero -->
@@ -41,7 +41,7 @@
         <span class="placeholder-glyph">?</span>
       </div>
     </div>
-    <p class="portal-caption" id="attemptsCaption">Qui est ce champion ? Tente ta chance ci-dessous.</p>
+    <p class="portal-caption" id="attemptsCaption">Who is this champion? Try your luck below.</p>
   </section>
 
   <!-- Guess input -->
@@ -51,14 +51,14 @@
         type="text"
         id="guessInput"
         class="guess-input"
-        placeholder="Tape le nom d'un champion…"
+        placeholder="Type a champion name…"
         autocomplete="off"
         spellcheck="false"
-        aria-label="Nom du champion"
+        aria-label="Champion name"
       />
       <ul class="suggestions" id="suggestions" hidden></ul>
     </div>
-    <button class="give-up-btn" id="giveUpBtn" type="button">Abandonner</button>
+    <button class="give-up-btn" id="giveUpBtn" type="button">Give up</button>
   </section>
 
   <!-- Win / lose banner -->
@@ -75,8 +75,6 @@
             <th>Affinité</th>
             <th>Rôle</th>
             <th>Rareté</th>
-            <th>Obtention</th>
-            <th>Année</th>
           </tr>
         </thead>
         <tbody id="boardBody">
@@ -88,13 +86,13 @@
   <p class="legend">
     <span class="legend-item"><span class="legend-swatch legend-swatch--correct"></span> Correct</span>
     <span class="legend-item"><span class="legend-swatch legend-swatch--wrong"></span> Incorrect</span>
-    <span class="legend-item"><span class="legend-arrow">↑ / ↓</span> Plus / moins que le champion mystère</span>
+    <span class="legend-item"><span class="legend-arrow">↑ / ↓</span> Higher / Lower than the mystery champion</span>
   </p>
 
 </main>
 
 <footer class="site-footer">
-  <p>Fait pour les invocateurs. Les données des champions sont personnalisées par le créateur de ce site.</p>
+  <p>Made for summoners. Champion data are customized by the site owner.</p>
 </footer>
 
 <script src="data.js"></script>

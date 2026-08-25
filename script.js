@@ -25,6 +25,8 @@
   let gameOver = false;
   let activeSuggestionIndex = -1;
 
+  // (moved) AVAILABLE_CHAMPIONS is initialized after helpers so normalize() is available
+
   /* ---------------- helpers ---------------- */
 
   function normalize(str) {
@@ -35,9 +37,27 @@
       .trim();
   }
 
+  // Build AVAILABLE_CHAMPIONS: Legendary/Mythical only, deduplicated by normalized name
+  const AVAILABLE_CHAMPIONS = (Array.isArray(CHAMPIONS)
+    ? (function () {
+        const seen = new Set();
+        const out = [];
+        for (let i = 0; i < CHAMPIONS.length; i++) {
+          const c = CHAMPIONS[i];
+          if (!c) continue;
+          if (!(c.rarity === "Legendary" || c.rarity === "Mythical")) continue;
+          const n = normalize(c.name || "");
+          if (seen.has(n)) continue;
+          seen.add(n);
+          out.push(c);
+        }
+        return out;
+      })()
+    : []);
+
   function findChampionByName(name) {
     const n = normalize(name);
-    return CHAMPIONS.find((c) => normalize(c.name) === n) || null;
+    return AVAILABLE_CHAMPIONS.find((c) => normalize(c.name) === n) || null;
   }
 
   function dailySeedIndex() {
@@ -47,7 +67,7 @@
     for (let i = 0; i < dateStr.length; i++) {
       hash = (hash * 31 + dateStr.charCodeAt(i)) >>> 0;
     }
-    return hash % CHAMPIONS.length;
+    return AVAILABLE_CHAMPIONS.length ? hash % AVAILABLE_CHAMPIONS.length : 0;
   }
 
   function todayKey() {
@@ -56,10 +76,10 @@
   }
 
   function pickRandomChampion(excludeName) {
-    if (CHAMPIONS.length === 1) return CHAMPIONS[0];
+    if (AVAILABLE_CHAMPIONS.length === 1) return AVAILABLE_CHAMPIONS[0];
     let c;
     do {
-      c = CHAMPIONS[Math.floor(Math.random() * CHAMPIONS.length)];
+      c = AVAILABLE_CHAMPIONS[Math.floor(Math.random() * AVAILABLE_CHAMPIONS.length)];
     } while (excludeName && normalize(c.name) === normalize(excludeName));
     return c;
   }
@@ -118,8 +138,8 @@
     });
 
     if (mode === "daily") {
-      answer = CHAMPIONS[dailySeedIndex()];
-      el.attemptsCaption.textContent = "Défi du jour — un seul champion mystère pour tout le monde.";
+      answer = AVAILABLE_CHAMPIONS[dailySeedIndex()];
+      el.attemptsCaption.textContent = "Daily Challenge — one mystery champion for everyone.";
       const progress = loadDailyProgress();
       if (progress) {
         progress.guessNames.forEach((name) => {
@@ -132,7 +152,7 @@
       }
     } else {
       answer = pickRandomChampion();
-      el.attemptsCaption.textContent = "Partie infinie — devine autant de champions que tu veux.";
+      el.attemptsCaption.textContent = "Infinite — guess as many champions as you like.";
     }
 
     el.guessInput.focus();
@@ -153,31 +173,46 @@
 
     if (!q) {
       el.suggestions.hidden = true;
+      el.suggestions.style.display = "none";
       return;
     }
 
     const guessedNames = new Set(guesses.map((g) => normalize(g.name)));
-    const matches = CHAMPIONS.filter(
+    const matches = AVAILABLE_CHAMPIONS.filter(
       (c) => normalize(c.name).includes(q) && !guessedNames.has(normalize(c.name))
     ).slice(0, 8);
 
     if (matches.length === 0) {
       const li = document.createElement("li");
       li.className = "no-match";
-      li.textContent = "Aucun champion trouvé";
+      li.textContent = "No champion found";
+      li.setAttribute('role','option');
       el.suggestions.appendChild(li);
       el.suggestions.hidden = false;
+      el.suggestions.style.display = 'block';
+      el.suggestions.style.zIndex = 10000;
       return;
     }
 
     matches.forEach((champ) => {
       const li = document.createElement("li");
-      li.textContent = champ.name;
+      li.className = "suggestion-item";
+      li.setAttribute('role','option');
+      li.setAttribute('tabindex','0');
+      const thumb = buildThumb(champ);
+      thumb.classList.add("suggestion-thumb");
+      li.appendChild(thumb);
+      const span = document.createElement("span");
+      span.textContent = champ.name;
+      li.appendChild(span);
       li.addEventListener("click", () => submitGuess(champ.name));
+      li.addEventListener('keydown', (e) => { if(e.key === 'Enter') submitGuess(champ.name); });
       el.suggestions.appendChild(li);
     });
 
     el.suggestions.hidden = false;
+    el.suggestions.style.display = 'block';
+    el.suggestions.style.zIndex = 10000;
   }
 
   el.guessInput.addEventListener("input", () => {
@@ -225,7 +260,11 @@
 
     addGuess(champ);
     el.guessInput.value = "";
+    // close and clear suggestions immediately after selecting
     el.suggestions.hidden = true;
+    el.suggestions.style.display = 'none';
+    el.suggestions.innerHTML = '';
+    activeSuggestionIndex = -1;
 
     if (normalize(champ.name) === normalize(answer.name)) {
       endGame(true);
@@ -240,28 +279,32 @@
     return gi < ai ? "↑" : "↓";
   }
 
-  function yearArrow(guessYear, answerYear) {
-    if (!guessYear || !answerYear || guessYear === answerYear) return "";
-    return guessYear < answerYear ? "↑" : "↓";
-  }
-
   function buildThumb(champ) {
-    if (champ.image) {
-      const img = document.createElement("img");
-      img.src = `images/${champ.image}`;
-      img.alt = champ.name;
-      img.onerror = function () {
-        const fallback = document.createElement("div");
-        fallback.className = "thumb-fallback";
-        fallback.textContent = champ.name.slice(0, 2).toUpperCase();
-        img.replaceWith(fallback);
-      };
-      return img;
-    }
     const fallback = document.createElement("div");
     fallback.className = "thumb-fallback";
     fallback.textContent = champ.name.slice(0, 2).toUpperCase();
-    return fallback;
+
+    const img = document.createElement("img");
+    img.alt = champ.name;
+
+    const candidates = [];
+    if (champ.image && champ.image.trim()) candidates.push(`images/${champ.image}`);
+    if (champ.imageHint && champ.imageHint.trim()) {
+      ["png", "webp", "jpg", "jpeg"].forEach((ext) =>
+        candidates.push(`images/${champ.imageHint}.${ext}`)
+      );
+    }
+
+    if (candidates.length === 0) return fallback;
+
+    let idx = 0;
+    img.onerror = function () {
+      idx++;
+      if (idx < candidates.length) img.src = candidates[idx];
+      else img.replaceWith(fallback);
+    };
+    img.src = candidates[0];
+    return img;
   }
 
   function addGuess(champ, opts) {
@@ -300,15 +343,6 @@
     const rarityCorrect = champ.rarity === answer.rarity;
     row.appendChild(makeCell(champ.rarity, rarityCorrect, rarityArrow(champ.rarity, answer.rarity)));
 
-    // Obtained from
-    row.appendChild(makeCell(champ.obtainedFrom, champ.obtainedFrom === answer.obtainedFrom));
-
-    // Release year
-    const yearCorrect = champ.releaseYear === answer.releaseYear;
-    row.appendChild(
-      makeCell(champ.releaseYear ?? "—", yearCorrect, yearArrow(champ.releaseYear, answer.releaseYear))
-    );
-
     el.boardBody.insertBefore(row, el.boardBody.firstChild);
   }
 
@@ -338,16 +372,16 @@
     el.resultBanner.hidden = false;
     el.resultBanner.classList.add(won ? "win" : "lose");
 
-    const attemptsWord = guesses.length > 1 ? "tentatives" : "tentative";
+    const attemptsWord = guesses.length > 1 ? "attempts" : "attempt";
     const title = won
-      ? `Trouvé ! C'était bien <span class="answer-name">${answer.name}</span>, en ${guesses.length} ${attemptsWord}.`
-      : `C'était <span class="answer-name">${answer.name}</span>. Ce sera pour la prochaine fois !`;
+      ? `Found! It was <span class="answer-name">${answer.name}</span>, in ${guesses.length} ${attemptsWord}.`
+      : `It was <span class="answer-name">${answer.name}</span>. Better luck next time!`;
 
     el.resultBanner.innerHTML = `
       <div>${title}</div>
       <div class="banner-actions">
-        ${mode === "infinite" ? '<button id="playAgainBtn" type="button">Nouveau champion</button>' : ""}
-        <button id="shareBtn" type="button">Copier le résultat</button>
+        ${mode === "infinite" ? '<button id="playAgainBtn" type="button">New Champion</button>' : ""}
+        <button id="shareBtn" type="button">Copy result</button>
       </div>
     `;
 
@@ -363,17 +397,28 @@
   function revealPortal() {
     el.portalFigure.classList.add("is-revealed");
     el.portalFigure.innerHTML = "";
-    if (answer.image) {
-      const img = document.createElement("img");
-      img.src = `images/${answer.image}`;
-      img.alt = answer.name;
-      img.onerror = function () {
-        img.replaceWith(makeGlyph(answer.name));
-      };
-      el.portalFigure.appendChild(img);
-    } else {
-      el.portalFigure.appendChild(makeGlyph(answer.name));
+    const fallback = makeGlyph(answer.name);
+    const img = document.createElement("img");
+    img.alt = answer.name;
+    const candidates = [];
+    if (answer.image && answer.image.trim()) candidates.push(`images/${answer.image}`);
+    if (answer.imageHint && answer.imageHint.trim()) {
+      ["png", "webp", "jpg", "jpeg"].forEach((ext) =>
+        candidates.push(`images/${answer.imageHint}.${ext}`)
+      );
     }
+    if (candidates.length === 0) {
+      el.portalFigure.appendChild(fallback);
+      return;
+    }
+    let idx = 0;
+    img.onerror = function () {
+      idx++;
+      if (idx < candidates.length) img.src = candidates[idx];
+      else img.replaceWith(fallback);
+    };
+    img.src = candidates[0];
+    el.portalFigure.appendChild(img);
   }
 
   function makeGlyph(name) {
@@ -397,19 +442,17 @@
     const lines = guesses
       .slice()
       .reverse()
-      .map((g) => {
-        const squares = [
-          g.faction === answer.faction,
-          g.affinity === answer.affinity,
-          g.role === answer.role,
-          g.rarity === answer.rarity,
-          g.obtainedFrom === answer.obtainedFrom,
-          g.releaseYear === answer.releaseYear,
-        ]
-          .map((ok) => (ok ? "🟩" : "🟥"))
-          .join("");
-        return squares;
-      });
+        .map((g) => {
+          const squares = [
+            g.faction === answer.faction,
+            g.affinity === answer.affinity,
+            g.role === answer.role,
+            g.rarity === answer.rarity,
+          ]
+            .map((ok) => (ok ? "🟩" : "🟥"))
+            .join("");
+          return squares;
+        });
 
     const won = guesses.length && normalize(guesses[guesses.length - 1].name) === normalize(answer.name);
     const header = `RAIDLE ${mode === "daily" ? todayKey() : "(infini)"} — ${
@@ -420,10 +463,10 @@
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(text)
-        .then(() => flashShareButton("Copié !"))
-        .catch(() => flashShareButton("Impossible de copier"));
+        .then(() => flashShareButton("Copied!"))
+        .catch(() => flashShareButton("Unable to copy"));
     } else {
-      flashShareButton("Copie non supportée");
+        flashShareButton("Copy not supported");
     }
   }
 
@@ -439,8 +482,8 @@
 
   /* ---------------- boot ---------------- */
 
-  if (!Array.isArray(CHAMPIONS) || CHAMPIONS.length === 0) {
-    el.attemptsCaption.textContent = "Aucun champion trouvé dans data.js — ajoute des champions pour commencer.";
+  if (!Array.isArray(AVAILABLE_CHAMPIONS) || AVAILABLE_CHAMPIONS.length === 0) {
+    el.attemptsCaption.textContent = "No Legendary/Mythical champions found in data.js — add some champions to get started.";
   } else {
     startGame("daily");
   }
