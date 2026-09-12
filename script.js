@@ -14,7 +14,6 @@
     attemptsCaption: document.getElementById("attemptsCaption"),
     guessInput: document.getElementById("guessInput"),
     suggestions: document.getElementById("suggestions"),
-    giveUpBtn: document.getElementById("giveUpBtn"),
     resultBanner: document.getElementById("resultBanner"),
     boardBody: document.getElementById("boardBody"),
   };
@@ -151,7 +150,6 @@
     el.resultBanner.innerHTML = "";
     el.guessInput.value = "";
     el.guessInput.disabled = false;
-    el.giveUpBtn.disabled = false;
     el.portalFigure.classList.remove("is-revealed");
     el.portalFigure.innerHTML = '<span class="placeholder-glyph">?</span>';
 
@@ -404,8 +402,8 @@
   function endGame(won) {
     gameOver = true;
     el.guessInput.disabled = true;
-    el.giveUpBtn.disabled = true;
     el.suggestions.hidden = true;
+    if (el.portal) el.portal.classList.add("is-done");
 
     revealPortal();
 
@@ -421,6 +419,7 @@
       <div>${title}</div>
       <div class="banner-actions">
         ${mode === "infinite" ? '<button id="playAgainBtn" type="button">New Champion</button>' : ""}
+        <button id="shareBtn" type="button">Share</button>
       </div>
     `;
 
@@ -428,7 +427,8 @@
     if (playAgainBtn) {
       playAgainBtn.addEventListener("click", () => startGame("infinite"));
     }
-    document.getElementById("shareBtn").addEventListener("click", shareResult);
+    const shareBtn = document.getElementById("shareBtn");
+    if (shareBtn) shareBtn.addEventListener("click", shareResult);
 
     saveDailyProgress();
   }
@@ -469,11 +469,6 @@
     span.textContent = name;
     return span;
   }
-
-  el.giveUpBtn.addEventListener("click", () => {
-    if (gameOver) return;
-    endGame(false);
-  });
 
   /* ---------------- share ---------------- */
 
@@ -528,4 +523,5 @@
   } else {
     startGame("daily");
   }
+
 })();

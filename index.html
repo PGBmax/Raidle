@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raidle — Guess the Raid: Shadow Legends champion</title>
+<title>Raidle — Choose your game</title>
+<meta name="description" content="Raidle: two Raid Shadow Legends guessing games. Guess the champion from stats, or identify them from a skill description.">
+<meta name="theme-color" content="#0d0c0b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="noise" aria-hidden="true"></div>
 
 <header class="site-header">
   <div class="header-inner">
@@ -21,73 +21,48 @@
       </div>
       <h1>RAIDLE</h1>
     </div>
-    <p class="subtitle">Guess the mystery <strong>Legendary</strong> or <strong>Mythical</strong> champion</p>
+    <p class="subtitle">Raid: Shadow Legends — choose your game mode</p>
+    <p class="hub-count">370+ Legendary &amp; Mythical champions · Daily &amp; Infinite modes</p>
   </div>
 </header>
 
-<main class="game">
+<main class="hub-main">
 
-  <div class="mode-switch" role="tablist" aria-label="Game mode">
-    <button class="mode-btn is-active" data-mode="daily" role="tab" aria-selected="true">Daily</button>
-    <button class="mode-btn" data-mode="infinite" role="tab" aria-selected="false">Infinite</button>
-  </div>
+  <div class="hub-grid">
 
-  <section class="hero">
-    <div class="hero-card" id="portal">
-      <div class="hero-inner" id="portalFigure">
-        <span class="placeholder-glyph">?</span>
+    <a href="champions.html" class="hub-card">
+      <div class="hub-card-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="12" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="3" y="12" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="12" y="12" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
       </div>
-      <div class="hero-corner hero-corner--tl" aria-hidden="true"></div>
-      <div class="hero-corner hero-corner--tr" aria-hidden="true"></div>
-      <div class="hero-corner hero-corner--bl" aria-hidden="true"></div>
-      <div class="hero-corner hero-corner--br" aria-hidden="true"></div>
-    </div>
-    <p class="hero-caption" id="attemptsCaption">Who is this champion? Try your luck below.</p>
-  </section>
+      <div class="hub-card-title">Classic</div>
+      <p class="hub-card-desc">
+        A champion's silhouette is hidden from you. Guess who it is by comparing stats — 
+        Rarity, Affinity, Role, Faction and more — one attempt at a time.
+      </p>
+      <span class="hub-card-cta">Play Classic →</span>
+    </a>
 
-  <section class="input-row">
-    <div class="autocomplete" id="autocomplete">
-      <input
-        type="text"
-        id="guessInput"
-        class="guess-input"
-        placeholder="Search a champion…"
-        autocomplete="off"
-        spellcheck="false"
-        aria-label="Champion name"
-        aria-autocomplete="list"
-        aria-controls="suggestions"
-      />
-      <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
-    </div>
-    <button class="give-up-btn" id="giveUpBtn" type="button">Give up</button>
-  </section>
+    <a href="ability.html" class="hub-card">
+      <div class="hub-card-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path d="M11 2 L11 8 M11 14 L11 20 M2 11 L8 11 M14 11 L20 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/>
+        </svg>
+      </div>
+      <div class="hub-card-title">Ability</div>
+      <p class="hub-card-desc">
+        A champion's skill description is shown. Identify which champion it belongs to —
+        unlock hints for the spell name, affinity and faction after each wrong guess.
+      </p>
+      <span class="hub-card-cta">Play Ability →</span>
+    </a>
 
-  <section class="result-banner" id="resultBanner" hidden></section>
-
-  <section class="board-wrap">
-    <div class="board-scroll">
-      <table class="board" id="board">
-        <thead>
-          <tr>
-            <th class="col-portrait">Champion</th>
-            <th>Rarity</th>
-            <th>Affinity</th>
-            <th>Role</th>
-            <th>Alliance</th>
-            <th>Faction</th>
-            <th>Aura</th>
-          </tr>
-        </thead>
-        <tbody id="boardBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <div class="legend">
-    <span class="legend-item"><span class="chip chip--correct"></span>Correct</span>
-    <span class="legend-item"><span class="chip chip--wrong"></span>Wrong</span>
-    <span class="legend-item"><span class="legend-arrow">↑↓</span>Higher / Lower</span>
   </div>
 
 </main>
@@ -96,7 +71,5 @@
   <p>Made for summoners &mdash; Legendary &amp; Mythical only</p>
 </footer>
 
-<script src="data.js"></script>
-<script src="script.js"></script>
 </body>
 </html>

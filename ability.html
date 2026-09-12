@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raidle Ability — Identify the champion</title>
+<meta name="description" content="Identify the Raid: Shadow Legends champion from a skill description. Unlock hints progressively.">
+<meta name="theme-color" content="#0d0c0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="hub-link">← All games</a>
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><polygon points="11,2 20,7 20,15 11,20 2,15 2,7" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="11" cy="11" r="3" fill="currentColor"/></svg>
+      </div>
+      <h1>RAIDLE <span class="game-badge">Ability</span></h1>
+    </div>
+    <p class="subtitle">Identify the champion from a skill description</p>
+  </div>
+</header>
+
+<main class="game">
+
+  <div class="mode-switch" role="tablist" aria-label="Game mode">
+    <button class="mode-btn is-active" data-amode="daily" role="tab" aria-selected="true">Daily</button>
+    <button class="mode-btn" data-amode="infinite" role="tab" aria-selected="false">Infinite</button>
+  </div>
+
+  <!-- Champion portrait — silhouette during game, revealed at end -->
+  <section class="hero">
+    <div class="hero-card" id="portal">
+      <div class="hero-inner" id="portalFigure">
+        <span class="placeholder-glyph">?</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skill description card -->
+  <div class="ability-card">
+    <p class="ability-label">A champion casts a skill — which champion is it?</p>
+    <blockquote class="ability-desc" id="abilityDesc">—</blockquote>
+  </div>
+
+  <!-- Progressive hints -->
+  <div class="hints-row">
+    <div class="hint-chip" id="hintChip1">
+      <span class="hint-index">1</span>
+      <div class="hint-body">
+        <span class="hint-cat">Spell name</span>
+        <span class="hint-val" id="hintVal1">?</span>
+      </div>
+    </div>
+    <div class="hint-chip" id="hintChip2">
+      <span class="hint-index">2</span>
+      <div class="hint-body">
+        <span class="hint-cat">Affinity</span>
+        <span class="hint-val" id="hintVal2">?</span>
+      </div>
+    </div>
+    <div class="hint-chip" id="hintChip3">
+      <span class="hint-index">3</span>
+      <div class="hint-body">
+        <span class="hint-cat">Faction</span>
+        <span class="hint-val" id="hintVal3">?</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Champion search -->
+  <section class="input-row">
+    <div class="autocomplete">
+      <input
+        type="text"
+        id="abilityInput"
+        class="guess-input"
+        placeholder="Search a champion…"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Champion name"
+        aria-autocomplete="list"
+        aria-controls="abilitySuggestions"
+      />
+      <ul class="suggestions" id="abilitySuggestions" role="listbox" hidden></ul>
+    </div>
+  </section>
+
+  <!-- Wrong guesses list -->
+  <div class="wrong-list" id="wrongList" hidden>
+    <span class="wrong-list-label">Already tried:</span>
+    <div class="wrong-pills" id="wrongPills"></div>
+  </div>
+
+  <!-- Result banner -->
+  <section class="result-banner" id="resultBanner" hidden></section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Made for summoners &mdash; Legendary &amp; Mythical only</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="spellData.js"></script>
+<script src="ability.js"></script>
+</body>
+</html>
